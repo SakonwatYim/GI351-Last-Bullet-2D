@@ -8,6 +8,9 @@ public class Monster : MonoBehaviour, IDamageable
     [SerializeField] private float maxHealth = 20f;
     [SerializeField] private float knockbackPerDamage = 0.5f;
     [SerializeField] private AmmoPickup ammoDropPrefab; // optional
+    [SerializeField, Range(0f, 1f)] private float ammoDropChance = 0.33f;
+    [SerializeField] private HealthPickup potionDropPrefab; // optional
+    [SerializeField, Range(0f, 1f)] private float potionDropChance = 0.1f;
 
     public float LastHitTime { get; private set; } = -999f;
 
@@ -51,10 +54,15 @@ public class Monster : MonoBehaviour, IDamageable
 
     private void Die()
     {
-        if (ammoDropPrefab != null)
+        if (ammoDropPrefab != null && Random.value < ammoDropChance)
         {
             AmmoPickup p = Instantiate(ammoDropPrefab, transform.position, Quaternion.identity);
             p.Setup(5, Vector2.up * 4f);
+        }
+        if (potionDropPrefab != null && Random.value < potionDropChance)
+        {
+            HealthPickup h = Instantiate(potionDropPrefab, transform.position, Quaternion.identity);
+            h.Setup(new Vector2(Random.Range(-1.5f, 1.5f), 5f)); // pop out sideways so it doesn't overlap the ammo
         }
         Destroy(gameObject);
     }

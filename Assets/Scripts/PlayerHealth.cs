@@ -12,6 +12,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     [SerializeField] private Vector2 hurtKnockback = new Vector2(7f, 6f);
     [SerializeField] private float blinkInterval = 0.1f;
     [SerializeField] private float restartDelay = 1.5f;
+    [SerializeField] private bool showDebugGUI = true;
 
     public int CurrentHealth { get; private set; }
     public int MaxHealth => maxHealth;
@@ -94,6 +95,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
     private void OnGUI()
     {
+        if (!showDebugGUI) return;
         GUI.Label(new Rect(10, 50, 400, 25), IsDead ? "YOU DIED" : $"HP: {CurrentHealth} / {maxHealth}");
     }
 }

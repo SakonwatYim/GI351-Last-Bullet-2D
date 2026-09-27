@@ -20,7 +20,9 @@ public class MonsterAI : MonoBehaviour
     [SerializeField] private float chaseSpeed = 3.5f;
     [SerializeField] private float keepDistance = 4f;   // stops this far from the player to shoot (0 = run right into them)
     [SerializeField] private float jumpForce = 11f;
-    [SerializeField] private bool avoidLedges = true;
+    [SerializeField] private bool avoidLedges = true;   // only while patrolling / when the player isn't below
+    [SerializeField] private bool dropDownToPlayer = true; // walk off ledges when the player is lower
+    [SerializeField] private float dropHeight = 1f;     // player must be at least this much lower to drop
     [SerializeField] private LayerMask groundLayer;
 
     [Header("Shoot")]
@@ -101,7 +103,7 @@ public class MonsterAI : MonoBehaviour
 
                 if (grounded && WallAhead())
                     rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-                else if (avoidLedges && grounded && LedgeAhead())
+                else if (avoidLedges && grounded && !PlayerIsBelow() && LedgeAhead())
                     speed = 0f;
             }
         }
@@ -130,6 +132,11 @@ public class MonsterAI : MonoBehaviour
     {
         if (!needLineOfSight) return true;
         return Physics2D.Linecast(col.bounds.center, player.position, groundLayer).collider == null;
+    }
+
+    private bool PlayerIsBelow()
+    {
+        return dropDownToPlayer && player != null && player.position.y < col.bounds.min.y - dropHeight;
     }
 
     private bool CheckGround()
