@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.7924528, g: 0.45335913, b: 0.20558919, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -176,12 +176,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ff862c8e9d699a4682a523aac3581ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 20
+  maxHealth: 12
   knockbackPerDamage: 0.5
   ammoDropPrefab: {fileID: 6892440814789907983, guid: 739f2206320b9c14e8346eb58657b625, type: 3}
-  ammoDropChance: 0.33
+  ammoDropChance: 0.15
   potionDropPrefab: {fileID: 5105107961816043358, guid: 3dd328da7fc1338439849bf445483408, type: 3}
-  potionDropChance: 0.343
+  potionDropChance: 0.15
 --- !u!114 &-4570966190036314647
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -215,7 +215,7 @@ MonoBehaviour:
   bulletDamage: 1
   bulletScale: 1
   aimInaccuracy: 5
-  canDive: 0
+  canDive: 1
   diveRange: 7
   diveSpeed: 12
   diveTime: 0.5

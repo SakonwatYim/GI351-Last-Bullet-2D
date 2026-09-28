@@ -12,12 +12,15 @@ public class Monster : MonoBehaviour, IDamageable
     [SerializeField] private HealthPickup potionDropPrefab; // optional
     [SerializeField, Range(0f, 1f)] private float potionDropChance = 0.1f;
 
+    public static event System.Action<Monster> OnAnyMonsterDied;
+
     public float LastHitTime { get; private set; } = -999f;
 
     private float health;
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private Color baseColor;
+    private bool isDead;
 
     private void Awake()
     {
@@ -29,6 +32,7 @@ public class Monster : MonoBehaviour, IDamageable
 
     public void TakeDamage(float amount, Vector2 hitDirection)
     {
+        if (isDead) return;
         health -= amount;
         LastHitTime = Time.time;
 
@@ -54,6 +58,9 @@ public class Monster : MonoBehaviour, IDamageable
 
     private void Die()
     {
+        isDead = true;
+        OnAnyMonsterDied?.Invoke(this);
+
         if (ammoDropPrefab != null && Random.value < ammoDropChance)
         {
             AmmoPickup p = Instantiate(ammoDropPrefab, transform.position, Quaternion.identity);

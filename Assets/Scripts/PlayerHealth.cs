@@ -84,14 +84,15 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         var gun = GetComponent<Gun>();
         if (gun != null) gun.enabled = false;
         SetVisible(false);
-        StartCoroutine(RestartAfterDelay());
+        StartCoroutine(ShowGameOver());
     }
 
-    private IEnumerator RestartAfterDelay()
+    private IEnumerator ShowGameOver()
     {
         yield return new WaitForSeconds(restartDelay);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (GameOverUI.Instance != null) GameOverUI.Instance.Show();
     }
+
 
     private void OnGUI()
     {
