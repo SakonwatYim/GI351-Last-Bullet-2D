@@ -2,8 +2,9 @@ using UnityEngine;
 
 // Health potion pickup. Same setup as AmmoPickup:
 // SpriteRenderer + Rigidbody2D + two colliders:
-//   1) a normal collider (so it lands on the ground)
+//   1) a normal collider (so it doesn't slide through walls)
 //   2) a slightly bigger collider with Is Trigger ON (to detect the player)
+// Top-down: no gravity, it slides out and slows to a stop.
 [RequireComponent(typeof(Rigidbody2D))]
 public class HealthPickup : MonoBehaviour
 {
@@ -11,12 +12,17 @@ public class HealthPickup : MonoBehaviour
     [SerializeField] private float pickupDelay = 0.5f;
     [SerializeField] private bool pickupAtFullHealth = false; // false = stays on the ground until you need it
     [SerializeField] private float lifetime = 0f;             // 0 = never disappears
+    [SerializeField] private float slideDamping = 5f;         // higher = stops sooner after being thrown
 
     private float spawnTime;
 
     private void Awake()
     {
         spawnTime = Time.time;
+        var rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = 0f;
+        rb.linearDamping = slideDamping;
+        rb.freezeRotation = true;
         if (lifetime > 0f) Destroy(gameObject, lifetime);
     }
 

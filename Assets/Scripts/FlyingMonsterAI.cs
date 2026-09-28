@@ -1,7 +1,7 @@
 using UnityEngine;
 
-// Flying monster. Put on a Monster (together with Monster.cs) instead of MonsterAI.
-// Hovers around its spawn point -> spots the player -> flies above them,
+// Flying monster (top-down). Put on a Monster (together with Monster.cs) instead of MonsterAI.
+// Drifts around its spawn point -> spots the player -> circles around them at a distance,
 // shoots and/or dives at them. Ignores gravity. Also hurts the player on touch.
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
@@ -19,13 +19,15 @@ public class FlyingMonsterAI : MonoBehaviour
     [Header("Idle")]
     [SerializeField] private float wanderRadius = 2.5f;
     [SerializeField] private float idleSpeed = 1.5f;
-    [SerializeField] private float bobAmount = 0.3f;         // up/down wobble
+    [SerializeField] private float bobAmount = 0.3f;         // side-to-side wobble while flying
     [SerializeField] private float bobSpeed = 3f;
 
     [Header("Chase")]
     [SerializeField] private float chaseSpeed = 4f;
     [SerializeField] private float acceleration = 8f;        // how fast it turns / changes speed
-    [SerializeField] private Vector2 hoverOffset = new Vector2(3f, 3.5f); // where it hangs around the player
+    [SerializeField] private float hoverDistance = 4f;       // keeps this far from the player
+    [SerializeField, Range(0f, 1f)] private float orbitAmount = 0.5f; // 0 = just hover, 1 = circle the player fast
+    [SerializeField] private float orbitSwapInterval = 4f;   // switches circling direction every few seconds (0 = never)
 
     [Header("Shoot")]
     [SerializeField] private Bullet bulletPrefab;            // leave empty = no shooting
@@ -64,7 +66,8 @@ public class FlyingMonsterAI : MonoBehaviour
     private float nextFireTime;
     private float nextDiveTime;
     private float bobOffset;
-    private int hoverSide = 1;
+    private int orbitSide = 1;
+    private float nextOrbitSwapTime;
 
     private void Awake()
     {
@@ -83,7 +86,8 @@ public class FlyingMonsterAI : MonoBehaviour
         home = transform.position;
         wanderTarget = home;
         bobOffset = Random.value * 10f;
-        hoverSide = Random.value < 0.5f ? -1 : 1;
+        orbitSide = Random.value < 0.5f ? -1 : 1;
+        nextOrbitSwapTime = Time.time + orbitSwapInterval * Random.Range(0.5f, 1.5f);
         nextFireTime = Time.time + Random.Range(0.5f, fireInterval);
         nextDiveTime = Time.time + Random.Range(1f, diveCooldown);
     }
@@ -153,13 +157,20 @@ public class FlyingMonsterAI : MonoBehaviour
 
             case State.Chase:
             case State.Recover:
-                // Hang out above and to one side of the player; swap sides if the player walks past
-                float dx = player.position.x - pos.x;
-                if (Mathf.Abs(dx) > hoverOffset.x * 2f) hoverSide = dx > 0f ? -1 : 1;
-                Vector2 target = (Vector2)player.position + new Vector2(hoverOffset.x * hoverSide, hoverOffset.y);
-                Vector2 toTarget = target - pos;
+                // Keep hoverDistance away from the player while circling around them
+                if (orbitSwapInterval > 0f && Time.time >= nextOrbitSwapTime)
+                {
+                    orbitSide = -orbitSide;
+                    nextOrbitSwapTime = Time.time + orbitSwapInterval * Random.Range(0.5f, 1.5f);
+                }
+
+                Vector2 fromPlayer = pos - (Vector2)player.position;
+                Vector2 radial = fromPlayer.sqrMagnitude > 0.01f ? fromPlayer.normalized : Random.insideUnitCircle.normalized;
+                Vector2 tangent = new Vector2(-radial.y, radial.x) * orbitSide;
+                Vector2 target = (Vector2)player.position + radial * hoverDistance;
+
                 float speed = state == State.Recover ? chaseSpeed * 0.6f : chaseSpeed;
-                desired = Vector2.ClampMagnitude(toTarget * 2f, 1f) * speed;
+                desired = Vector2.ClampMagnitude(Vector2.ClampMagnitude((target - pos) * 2f, 1f) + tangent * orbitAmount, 1f) * speed;
                 break;
 
             case State.Dive:
@@ -177,7 +188,13 @@ public class FlyingMonsterAI : MonoBehaviour
         }
 
         desired = AvoidWalls(desired);
-        desired.y += Mathf.Sin((Time.time + bobOffset) * bobSpeed) * bobAmount;
+
+        // Wobble sideways (relative to the flight direction) so it looks like it's flying
+        if (desired.sqrMagnitude > 0.01f)
+        {
+            Vector2 side = new Vector2(-desired.y, desired.x).normalized;
+            desired += side * Mathf.Sin((Time.time + bobOffset) * bobSpeed) * bobAmount;
+        }
 
         rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, desired, acceleration * Time.fixedDeltaTime);
 
@@ -185,21 +202,23 @@ public class FlyingMonsterAI : MonoBehaviour
         else FaceX(rb.linearVelocity.x);
     }
 
-    // If a wall is in the way, slide along it (try up first, then down)
+    // Directions tried (in degrees from the wanted one) when a wall is in the way
+    private static readonly float[] SteerAngles = { 0f, 35f, -35f, 70f, -70f, 105f, -105f };
+
+    // If a wall is in the way, try turning a bit left/right until a free direction is found
     private Vector2 AvoidWalls(Vector2 desired)
     {
         if (desired.sqrMagnitude < 0.01f) return desired;
 
         float probe = col.bounds.extents.magnitude + 0.5f;
-        Vector2 dir = desired.normalized;
-        if (!Physics2D.Raycast(col.bounds.center, dir, probe, groundLayer)) return desired;
+        foreach (float angle in SteerAngles)
+        {
+            Vector2 dir = Quaternion.Euler(0f, 0f, angle) * desired;
+            if (!Physics2D.Raycast(col.bounds.center, dir.normalized, probe, groundLayer))
+                return dir;
+        }
 
-        Vector2 up = new Vector2(dir.x * 0.3f, 1f).normalized;
-        if (!Physics2D.Raycast(col.bounds.center, up, probe, groundLayer)) return up * desired.magnitude;
-
-        Vector2 down = new Vector2(dir.x * 0.3f, -1f).normalized;
-        if (!Physics2D.Raycast(col.bounds.center, down, probe, groundLayer)) return down * desired.magnitude;
-
+        orbitSide = -orbitSide; // boxed in -> try circling the other way
         return -desired;
     }
 

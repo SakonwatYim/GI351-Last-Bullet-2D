@@ -1,29 +1,31 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
-// Put this on a Monster (together with Monster.cs).
-// Patrols back and forth -> spots the player -> chases, jumps over walls, and shoots.
-// Also hurts the player on touch.
+// Top-down monster. Put this on a Monster (together with Monster.cs).
+// Wanders around its spawn point -> spots the player -> chases (steering around walls) and shoots.
+// Also hurts the player on touch. Ignores gravity.
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Monster))]
 public class MonsterAI : MonoBehaviour
 {
-    private enum State { Patrol, Chase }
+    private enum State { Wander, Chase }
 
     [Header("Detect")]
     [SerializeField] private float detectRange = 10f;
     [SerializeField] private float loseRange = 15f;
     [SerializeField] private bool needLineOfSight = true;
+    [Tooltip("Walls / obstacles that block sight and movement.")]
+    [FormerlySerializedAs("groundLayer")]
+    [SerializeField] private LayerMask obstacleLayer;
 
     [Header("Move")]
-    [SerializeField] private float patrolSpeed = 1.5f;
+    [FormerlySerializedAs("patrolSpeed")]
+    [SerializeField] private float wanderSpeed = 1.5f;
+    [SerializeField] private float wanderRadius = 3f;
     [SerializeField] private float chaseSpeed = 3.5f;
     [SerializeField] private float keepDistance = 4f;   // stops this far from the player to shoot (0 = run right into them)
-    [SerializeField] private float jumpForce = 11f;
-    [SerializeField] private bool avoidLedges = true;   // only while patrolling / when the player isn't below
-    [SerializeField] private bool dropDownToPlayer = true; // walk off ledges when the player is lower
-    [SerializeField] private float dropHeight = 1f;     // player must be at least this much lower to drop
-    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float acceleration = 20f;
 
     [Header("Shoot")]
     [SerializeField] private Bullet bulletPrefab;       // leave empty = melee-only monster
@@ -41,13 +43,17 @@ public class MonsterAI : MonoBehaviour
     [Header("Hit Stun")]
     [SerializeField] private float hitStunTime = 0.25f; // stop moving briefly after being shot so knockback shows
 
+    // Directions tried (in degrees from the wanted one) when a wall is in the way
+    private static readonly float[] SteerAngles = { 0f, 35f, -35f, 70f, -70f, 105f, -105f };
+
     private Rigidbody2D rb;
     private Collider2D col;
     private Monster monster;
     private Transform player;
-    private State state = State.Patrol;
-    private int facing = 1;
-    private bool grounded;
+    private State state = State.Wander;
+    private Vector2 home;
+    private Vector2 wanderTarget;
+    private float nextWanderTime;
     private float nextFireTime;
 
     private void Awake()
@@ -55,6 +61,7 @@ public class MonsterAI : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
         monster = GetComponent<Monster>();
+        rb.gravityScale = 0f;
         rb.freezeRotation = true;
     }
 
@@ -62,19 +69,25 @@ public class MonsterAI : MonoBehaviour
     {
         var p = FindAnyObjectByType<PlayerController>();
         if (p != null) player = p.transform;
+
+        home = transform.position;
+        wanderTarget = home;
         nextFireTime = Time.time + Random.Range(0.5f, fireInterval); // monsters don't all shoot in sync
     }
 
     private void Update()
     {
-        if (player == null || !player.gameObject.activeInHierarchy) { state = State.Patrol; return; }
+        if (player == null || !player.gameObject.activeInHierarchy) { state = State.Wander; return; }
 
         float dist = Vector2.Distance(transform.position, player.position);
 
-        if (state == State.Patrol && dist <= detectRange && CanSeePlayer())
+        if (state == State.Wander && dist <= detectRange && CanSeePlayer())
             state = State.Chase;
         else if (state == State.Chase && dist > loseRange)
-            state = State.Patrol;
+        {
+            state = State.Wander;
+            home = transform.position;
+        }
 
         if (state == State.Chase && bulletPrefab != null && dist <= shootRange &&
             Time.time >= nextFireTime && CanSeePlayer())
@@ -86,35 +99,49 @@ public class MonsterAI : MonoBehaviour
 
     private void FixedUpdate()
     {
-        grounded = CheckGround();
+        if (Time.time < monster.LastHitTime + hitStunTime) return; // let knockback play out
 
-        if (Time.time < monster.LastHitTime + hitStunTime) return;
-
-        float speed = 0f;
+        Vector2 pos = rb.position;
+        Vector2 desired;
 
         if (state == State.Chase && player != null)
         {
-            float dx = player.position.x - transform.position.x;
-            SetFacing(dx >= 0f ? 1 : -1);
-
-            if (Mathf.Abs(dx) > keepDistance)
-            {
-                speed = chaseSpeed;
-
-                if (grounded && WallAhead())
-                    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-                else if (avoidLedges && grounded && !PlayerIsBelow() && LedgeAhead())
-                    speed = 0f;
-            }
+            Vector2 toPlayer = (Vector2)player.position - pos;
+            desired = toPlayer.magnitude > keepDistance ? toPlayer.normalized * chaseSpeed : Vector2.zero;
+            FaceX(toPlayer.x);
         }
         else
         {
-            if (grounded && (WallAhead() || (avoidLedges && LedgeAhead())))
-                SetFacing(-facing);
-            speed = patrolSpeed;
+            // Pick a new random point near home every few seconds (or once reached)
+            if (Vector2.Distance(pos, wanderTarget) < 0.3f || Time.time >= nextWanderTime)
+            {
+                wanderTarget = home + Random.insideUnitCircle * wanderRadius;
+                nextWanderTime = Time.time + Random.Range(2f, 4f);
+            }
+            Vector2 toTarget = wanderTarget - pos;
+            desired = toTarget.magnitude > 0.3f ? toTarget.normalized * wanderSpeed : Vector2.zero;
+            FaceX(desired.x);
         }
 
-        rb.linearVelocity = new Vector2(facing * speed, rb.linearVelocity.y);
+        desired = SteerAroundWalls(desired);
+        rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, desired, acceleration * Time.fixedDeltaTime);
+    }
+
+    // If a wall is in the way, try turning a bit left/right until a free direction is found
+    private Vector2 SteerAroundWalls(Vector2 desired)
+    {
+        if (desired.sqrMagnitude < 0.01f) return desired;
+
+        float probe = col.bounds.extents.magnitude + 0.4f;
+        foreach (float angle in SteerAngles)
+        {
+            Vector2 dir = Quaternion.Euler(0f, 0f, angle) * desired;
+            if (!Physics2D.CircleCast(col.bounds.center, col.bounds.extents.x * 0.8f, dir.normalized, probe, obstacleLayer))
+                return dir;
+        }
+
+        if (state == State.Wander) nextWanderTime = 0f; // boxed in -> pick another wander point
+        return Vector2.zero;
     }
 
     private void Shoot()
@@ -131,40 +158,14 @@ public class MonsterAI : MonoBehaviour
     private bool CanSeePlayer()
     {
         if (!needLineOfSight) return true;
-        return Physics2D.Linecast(col.bounds.center, player.position, groundLayer).collider == null;
+        return Physics2D.Linecast(col.bounds.center, player.position, obstacleLayer).collider == null;
     }
 
-    private bool PlayerIsBelow()
+    private void FaceX(float x)
     {
-        return dropDownToPlayer && player != null && player.position.y < col.bounds.min.y - dropHeight;
-    }
-
-    private bool CheckGround()
-    {
-        Bounds b = col.bounds;
-        return Physics2D.OverlapBox(new Vector2(b.center.x, b.min.y - 0.05f),
-                                    new Vector2(b.size.x * 0.9f, 0.1f), 0f, groundLayer);
-    }
-
-    private bool WallAhead()
-    {
-        Bounds b = col.bounds;
-        return Physics2D.Raycast(b.center, Vector2.right * facing, b.extents.x + 0.2f, groundLayer);
-    }
-
-    private bool LedgeAhead()
-    {
-        Bounds b = col.bounds;
-        Vector2 origin = new Vector2(b.center.x + facing * (b.extents.x + 0.2f), b.min.y + 0.1f);
-        return !Physics2D.Raycast(origin, Vector2.down, 0.6f, groundLayer);
-    }
-
-    private void SetFacing(int dir)
-    {
-        if (dir == facing) return;
-        facing = dir;
+        if (Mathf.Abs(x) < 0.05f) return;
         Vector3 s = transform.localScale;
-        s.x = Mathf.Abs(s.x) * dir;
+        s.x = Mathf.Abs(s.x) * (x > 0f ? 1f : -1f);
         transform.localScale = s;
     }
 
@@ -184,5 +185,7 @@ public class MonsterAI : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, detectRange);
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, shootRange);
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(Application.isPlaying ? (Vector3)home : transform.position, wanderRadius);
     }
 }

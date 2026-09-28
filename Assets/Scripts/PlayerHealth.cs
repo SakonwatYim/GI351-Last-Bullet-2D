@@ -9,7 +9,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 {
     [SerializeField] private int maxHealth = 5;
     [SerializeField] private float invincibleTime = 1f;
-    [SerializeField] private Vector2 hurtKnockback = new Vector2(7f, 6f);
+    [SerializeField] private float hurtKnockback = 8f;     // pushed away from whatever hit you
     [SerializeField] private float blinkInterval = 0.1f;
     [SerializeField] private float restartDelay = 1.5f;
     [SerializeField] private bool showDebugGUI = true;
@@ -38,8 +38,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
 
         CurrentHealth -= Mathf.Max(1, Mathf.RoundToInt(amount));
 
-        float side = hitDirection.x >= 0f ? 1f : -1f;
-        controller.ApplyKnockback(new Vector2(side * hurtKnockback.x, hurtKnockback.y));
+        Vector2 pushDir = hitDirection.sqrMagnitude > 0.0001f ? hitDirection.normalized : Vector2.right;
+        controller.ApplyKnockback(pushDir * hurtKnockback);
         if (CameraFollow.Instance != null) CameraFollow.Instance.Shake(0.3f, 0.2f);
 
         if (CurrentHealth <= 0)

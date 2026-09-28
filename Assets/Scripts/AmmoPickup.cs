@@ -1,19 +1,25 @@
 using UnityEngine;
 
 // Ammo pickup prefab: SpriteRenderer + Rigidbody2D + two colliders:
-//   1) a normal collider (so it lands on the ground)
+//   1) a normal collider (so it doesn't slide through walls)
 //   2) a slightly bigger collider with Is Trigger ON (to detect the player)
+// Top-down: no gravity, it slides out and slows to a stop.
 [RequireComponent(typeof(Rigidbody2D))]
 public class AmmoPickup : MonoBehaviour
 {
     [SerializeField] private int amount = 5;
     [SerializeField] private float pickupDelay = 0.8f; // so a dropped pickup isn't grabbed back instantly
+    [SerializeField] private float slideDamping = 5f;  // higher = stops sooner after being thrown
 
     private float spawnTime;
 
     private void Awake()
     {
         spawnTime = Time.time;
+        var rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = 0f;
+        rb.linearDamping = slideDamping;
+        rb.freezeRotation = true;
     }
 
     private void Start()

@@ -225,8 +225,10 @@ public class Gun : MonoBehaviour
 
         if (ammoPickupPrefab != null)
         {
-            AmmoPickup p = Instantiate(ammoPickupPrefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
-            p.Setup(amount, new Vector2(player.FacingDirection * 3f, 4f));
+            // Toss it toward the mouse, starting a little in front so it doesn't spawn inside the player
+            Vector3 spawn = transform.position + (Vector3)(aimDirection * 0.5f);
+            AmmoPickup p = Instantiate(ammoPickupPrefab, spawn, Quaternion.identity);
+            p.Setup(amount, aimDirection * 5f);
         }
     }
 

@@ -67,12 +67,12 @@ public class Monster : MonoBehaviour, IDamageable
         if (ammoDropPrefab != null && Random.value < ammoDropChance)
         {
             AmmoPickup p = Instantiate(ammoDropPrefab, transform.position, Quaternion.identity);
-            p.Setup(5, Vector2.up * 4f);
+            p.Setup(5, Random.insideUnitCircle.normalized * 4f); // scatter in a random direction
         }
         if (potionDropPrefab != null && Random.value < potionDropChance)
         {
             HealthPickup h = Instantiate(potionDropPrefab, transform.position, Quaternion.identity);
-            h.Setup(new Vector2(Random.Range(-1.5f, 1.5f), 5f)); // pop out sideways so it doesn't overlap the ammo
+            h.Setup(Random.insideUnitCircle.normalized * 4f); // separate random direction so it doesn't overlap the ammo
         }
         Destroy(gameObject);
     }
