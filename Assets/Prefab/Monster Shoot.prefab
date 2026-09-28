@@ -194,22 +194,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f43dbc0df2c85ce4d82b68e6d0ac4fdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectRange: 10
-  loseRange: 15
+  detectRange: 15
+  loseRange: 20
   needLineOfSight: 1
   patrolSpeed: 1.5
   chaseSpeed: 3.5
   keepDistance: 4
   jumpForce: 11
   avoidLedges: 1
+  dropDownToPlayer: 1
+  dropHeight: 4
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
   bulletPrefab: {fileID: 943375943367977110, guid: 16072c8b07d8f9a44be0fd35d87725f6, type: 3}
   firePoint: {fileID: 0}
   shootRange: 15
-  fireInterval: 3
-  bulletSpeed: 20
+  fireInterval: 2
+  bulletSpeed: 10
   bulletDamage: 1
   bulletScale: 1
   aimInaccuracy: 5
