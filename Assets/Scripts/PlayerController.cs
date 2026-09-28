@@ -28,6 +28,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector2 wallJumpForce = new Vector2(9f, 14f);
     [SerializeField] private float wallJumpControlLock = 0.18f; // time the player can't steer after a wall jump
 
+    [Header("Facing")]
+    [SerializeField] private bool faceMouse = true;             // false = face the move direction instead
+    [SerializeField] private float faceMouseDeadZone = 0.1f;    // don't flip-flop when the mouse is right above/below
+
     [Header("Knockback")]
     [SerializeField] private float knockbackControlLock = 0.15f;
 
@@ -40,6 +44,7 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D rb;
     private Collider2D col;
+    private Camera cam;
     private float baseGravity;
 
     private float moveInput;
@@ -57,6 +62,10 @@ public class PlayerController : MonoBehaviour
         rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         baseGravity = rb.gravityScale;
+
+        // No friction, so pushing into a wall mid-air doesn't make the player stick to it.
+        // (Movement sets velocity directly, so ground control isn't affected.)
+        rb.sharedMaterial = new PhysicsMaterial2D("PlayerNoFriction") { friction = 0f, bounciness = 0f };
     }
 
     private void Update()
@@ -71,8 +80,9 @@ public class PlayerController : MonoBehaviour
         {
             if (coyoteTimer > 0f)
                 Jump();
-            else if (wallDirection != 0 && !IsGrounded)
-                WallJump();
+            // Wall jump disabled
+            // else if (wallDirection != 0 && !IsGrounded)
+            //     WallJump();
         }
     }
 
@@ -80,7 +90,7 @@ public class PlayerController : MonoBehaviour
     {
         CheckCollisions();
         ApplyHorizontalMovement();
-        ApplyWallSlide();
+        // ApplyWallSlide(); // Wall slide disabled (goes with wall jump)
         ApplyGravity();
     }
 
@@ -116,8 +126,22 @@ public class PlayerController : MonoBehaviour
         if (jumpReleased && rb.linearVelocity.y > 0f)
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * jumpCutMultiplier);
 
-        if (moveInput != 0f && controlLockTimer <= 0f)
+        if (faceMouse && Mouse.current != null)
+            FaceMouse();
+        else if (moveInput != 0f && controlLockTimer <= 0f)
             SetFacing((int)Mathf.Sign(moveInput));
+    }
+
+    private void FaceMouse()
+    {
+        if (cam == null) cam = Camera.main;
+        if (cam == null) return;
+
+        Vector3 mouseScreen = Mouse.current.position.ReadValue();
+        mouseScreen.z = -cam.transform.position.z;
+        float dx = cam.ScreenToWorldPoint(mouseScreen).x - transform.position.x;
+        if (Mathf.Abs(dx) > faceMouseDeadZone)
+            SetFacing(dx > 0f ? 1 : -1);
     }
 
     private void CheckCollisions()

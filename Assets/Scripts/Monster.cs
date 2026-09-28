@@ -15,6 +15,8 @@ public class Monster : MonoBehaviour, IDamageable
     public static event System.Action<Monster> OnAnyMonsterDied;
 
     public float LastHitTime { get; private set; } = -999f;
+    public float Health => health;
+    public float MaxHealth => maxHealth;
 
     private float health;
     private Rigidbody2D rb;
@@ -28,6 +30,7 @@ public class Monster : MonoBehaviour, IDamageable
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         if (sr != null) baseColor = sr.color;
+        if (GetComponent<MonsterHealthBar>() == null) gameObject.AddComponent<MonsterHealthBar>();
     }
 
     public void TakeDamage(float amount, Vector2 hitDirection)
