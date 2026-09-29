@@ -10,13 +10,15 @@ public class MainMenu : MonoBehaviour
     private void Start()
     {
         Time.timeScale = 1f; // in case we came back from a paused Game Over
+        MusicManager.Instance.PlayMusic("Main");
     }
 
     public void PlayGame()
     {
         SceneManager.LoadScene(gameplayScene);
+        MusicManager.Instance.PlayMusic("GamePlay");
     }
-
+    
     public void QuitGame()
     {
 #if UNITY_EDITOR
