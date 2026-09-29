@@ -198,16 +198,14 @@ MonoBehaviour:
   detectRange: 15
   loseRange: 20
   needLineOfSight: 1
-  patrolSpeed: 1.5
-  chaseSpeed: 3.5
-  keepDistance: 4
-  jumpForce: 11
-  avoidLedges: 1
-  dropDownToPlayer: 1
-  dropHeight: 4
-  groundLayer:
+  obstacleLayer:
     serializedVersion: 2
     m_Bits: 64
+  wanderSpeed: 1.5
+  wanderRadius: 3
+  chaseSpeed: 3.5
+  keepDistance: 6
+  acceleration: 20
   bulletPrefab: {fileID: 943375943367977110, guid: 16072c8b07d8f9a44be0fd35d87725f6, type: 3}
   firePoint: {fileID: 0}
   shootRange: 15
