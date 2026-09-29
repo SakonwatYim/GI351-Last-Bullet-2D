@@ -2446,13 +2446,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   soundEffects:
   - groupID: Shoot
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 16e3cf0a941d7ce45a0ba11db0661ab2, type: 3}
   - groupID: Laser
-    clips: []
+    clips:
+    - {fileID: 8300000, guid: 0a543ea776553a643a4c0391f183f203, type: 3}
   - groupID: Walk
     clips: []
-  - groupID: Hit
-    clips: []
+  - groupID: shotgun
+    clips:
+    - {fileID: 8300000, guid: 8f9246365ce6bec48962951d1e250f7e, type: 3}
   - groupID: Hit
     clips: []
   - groupID: Button

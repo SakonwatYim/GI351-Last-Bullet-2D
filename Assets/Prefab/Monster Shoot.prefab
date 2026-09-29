@@ -80,7 +80,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.5566038, g: 0.002625496, b: 0.002625496, a: 1}
   m_FlipX: 0
@@ -180,7 +180,7 @@ MonoBehaviour:
   maxHealth: 20
   knockbackPerDamage: 0.5
   ammoDropPrefab: {fileID: 6892440814789907983, guid: 739f2206320b9c14e8346eb58657b625, type: 3}
-  ammoDropChance: 0.15
+  ammoDropChance: 0.192
   potionDropPrefab: {fileID: 5105107961816043358, guid: 3dd328da7fc1338439849bf445483408, type: 3}
   potionDropChance: 0.15
 --- !u!114 &8881441235653319859
@@ -195,7 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f43dbc0df2c85ce4d82b68e6d0ac4fdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectRange: 15
+  detectRange: 20
   loseRange: 20
   needLineOfSight: 1
   obstacleLayer:
@@ -210,7 +210,7 @@ MonoBehaviour:
   firePoint: {fileID: 0}
   shootRange: 15
   fireInterval: 2
-  bulletSpeed: 10
+  bulletSpeed: 8
   bulletDamage: 1
   bulletScale: 1
   aimInaccuracy: 5

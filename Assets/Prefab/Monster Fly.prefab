@@ -80,7 +80,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.7924528, g: 0.45335913, b: 0.20558919, a: 1}
   m_FlipX: 0
@@ -195,7 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b549b9203a6e6a459bb5a20e0b0ec15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectRange: 12
+  detectRange: 15
   loseRange: 18
   needLineOfSight: 0
   groundLayer:
@@ -207,7 +207,9 @@ MonoBehaviour:
   bobSpeed: 3
   chaseSpeed: 4
   acceleration: 8
-  hoverOffset: {x: 3, y: 3.5}
+  hoverDistance: 4
+  orbitAmount: 0.5
+  orbitSwapInterval: 4
   bulletPrefab: {fileID: 943375943367977110, guid: 16072c8b07d8f9a44be0fd35d87725f6, type: 3}
   firePoint: {fileID: 0}
   shootRange: 9

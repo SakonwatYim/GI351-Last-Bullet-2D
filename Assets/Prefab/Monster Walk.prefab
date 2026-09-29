@@ -80,7 +80,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.4056604, g: 0, b: 0.3747777, a: 1}
   m_FlipX: 0
@@ -198,16 +198,14 @@ MonoBehaviour:
   detectRange: 10
   loseRange: 15
   needLineOfSight: 1
-  patrolSpeed: 1.5
-  chaseSpeed: 3
-  keepDistance: 0
-  jumpForce: 11
-  avoidLedges: 0
-  dropDownToPlayer: 1
-  dropHeight: 1
-  groundLayer:
+  obstacleLayer:
     serializedVersion: 2
     m_Bits: 64
+  wanderSpeed: 1.5
+  wanderRadius: 3
+  chaseSpeed: 3
+  keepDistance: 0
+  acceleration: 20
   bulletPrefab: {fileID: 0}
   firePoint: {fileID: 0}
   shootRange: 8
