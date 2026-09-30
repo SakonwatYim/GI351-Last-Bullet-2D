@@ -27,7 +27,8 @@ public class PlayerHUD : MonoBehaviour
 
     [Header("Skill")]
     [SerializeField] private Image skillFill;              // Filled / Radial 360 on top of the skill icon
-    [SerializeField] private TMP_Text skillText;           // "READY" / "3.2" / "+4"
+    [SerializeField] private TMP_Text skillText;  // "READY" / "3.2" / "+4"
+    [SerializeField] private TMP_Text skillCount;  // "READY" / "3.2" / "+4"
     [SerializeField] private Color skillReadyColor = new Color(0.4f, 0.9f, 1f);
     [SerializeField] private Color skillActiveColor = Color.white;
     [SerializeField] private Color skillCooldownColor = new Color(0.3f, 0.3f, 0.35f);
@@ -57,6 +58,7 @@ public class PlayerHUD : MonoBehaviour
         UpdateHealth();
         UpdateAmmo();
         UpdateSkill();
+        countSkillUpdate();
     }
 
     private void UpdateHealth()
@@ -99,7 +101,25 @@ public class PlayerHUD : MonoBehaviour
             powerText.color = c;
         }
     }
-
+    private void countSkillUpdate()
+    {
+        if (skill.count == 0)
+        {
+            skill.skill = "can use skill 2 time";
+        }
+        if (skill.count == 1)
+        {
+            skill.skill = "can use skill 1 time";
+        }
+        if (skill.count == 2)
+        {
+            skill.skill = "can use skill 0 time";
+        }
+        if (skill.count >= 3)
+        {
+            skill.skill = "cant use skill";
+        }
+    }
     private void UpdateSkill()
     {
         if (skill == null) return;
@@ -107,7 +127,7 @@ public class PlayerHUD : MonoBehaviour
         float fill;
         string text;
         Color c;
-
+        
         if (skill.IsActive)
         {
             fill = skill.Duration > 0f ? skill.ActiveTimeLeft / skill.Duration : 0f;

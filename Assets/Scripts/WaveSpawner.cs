@@ -18,6 +18,7 @@ public class WaveSpawner : MonoBehaviour
         [Tooltip("This monster only appears from this wave on.")]
         public int unlockWave = 1;
     }
+    [SerializeField] private int endGame;
 
     [Header("Monsters")]
     [SerializeField] private MonsterEntry[] monsters;
@@ -104,7 +105,16 @@ public class WaveSpawner : MonoBehaviour
             yield return new WaitForSeconds(timeBetweenWaves);
         }
     }
-
+    private IEnumerator endWave()
+    {
+        yield return new WaitForSeconds(0.2f);
+        if (passUI.Instance != null) passUI.Instance.Show();
+    }
+    private void Update()
+    {
+        if (CurrentWave >= endGame)
+        { StartCoroutine(endWave()); }
+    }
     private bool SpawnOne()
     {
         Monster prefab = PickMonster();

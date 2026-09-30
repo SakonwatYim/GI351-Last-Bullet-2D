@@ -5,11 +5,13 @@ using UnityEngine.InputSystem;
 public class AbsorbSkill : MonoBehaviour
 {
     [SerializeField] private float duration = 5f;
+    [SerializeField] public int count = 0;
     [SerializeField] private float cooldown = 10f;
     [SerializeField] private int ammoPerBullet = 1;
     [SerializeField] private Color hitTint = new Color(0.4f, 0.9f, 1f); // สีตอนโดนยิง
     [SerializeField] private Color activeTint = new Color(0.2f, 0.6f, 1f, 1f); // สีตอนกดใช้สกิล (สามารถปรับแต่งสีได้ใน Inspector)
     [SerializeField] private float hitTintDuration = 0.15f; // ระยะเวลาที่จะเปลี่ยนสีกระพริบตอนโดนยิง (วินาที)
+    public string skill;
     
     [Tooltip("The player's body sprite. Leave empty = the SpriteRenderer on this GameObject.")]
     [SerializeField] private SpriteRenderer bodyRenderer;
@@ -47,8 +49,27 @@ public class AbsorbSkill : MonoBehaviour
     {
         var kb = Keyboard.current;
         if (kb != null && kb.fKey.wasPressedThisFrame && Time.time >= readyAt)
-            Activate();
+        {
+            if (count >= 3)
+            {
+                skill = "cant use skill";
+            }
+            if (count >= 0 && count < 2)
+            {
+                count++;
+                Activate();
+                if (count == 1)
+                {
+                    skill = "can use skill 1 time";
+                }
+                if (count == 2)
+                {
+                    skill = "can use skill 0 time";
+                }
 
+               
+            }
+        }
         // ตรวจสอบว่าหมดเวลาสกิลหรือยัง เพื่อคืนค่าสีปกติ (ถ้าไม่ได้โดนยิงค้างอยู่)
         if (!IsActive && isHitTinted == false)
         {
@@ -136,6 +157,6 @@ public class AbsorbSkill : MonoBehaviour
             text = $"Skill [F]: cooldown {CooldownLeft:0.0}s";
         else
             text = "Skill [F]: READY";
-        GUI.Label(new Rect(10, 70, 400, 25), text);
+       GUI.Label(new Rect(10, 70, 400, 25), text);
     }
 }
