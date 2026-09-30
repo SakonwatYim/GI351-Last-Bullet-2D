@@ -46,19 +46,19 @@ public class WaveUI : MonoBehaviour
         if (spawner == null) return;
 
         if (waveText != null)
-            waveText.text = spawner.CurrentWave > 0 ? $"WAVE {spawner.CurrentWave}" : "GET READY";
+            waveText.text = "Start";
 
         if (aliveText != null)
         {
             aliveText.text = spawner.IsBreak
-                ? $"Next wave in {Mathf.CeilToInt(spawner.BreakTimeLeft)}"
+                ? "ready"
                 : $"Monsters: {spawner.AliveCount}";
         }
     }
 
-    private void HandleWaveStarted(int wave) => Announce($"WAVE {wave}", waveStartColor);
+    private void HandleWaveStarted(int wave) => Announce("gO", waveStartColor);
 
-    private void HandleWaveCleared(int wave) => Announce("WAVE CLEARED!", waveClearColor);
+    private void HandleWaveCleared(int wave) => Announce("CLEARED!", waveClearColor);
 
     private void Announce(string message, Color color)
     {

@@ -179,9 +179,9 @@ MonoBehaviour:
   maxHealth: 12
   knockbackPerDamage: 0.5
   ammoDropPrefab: {fileID: 6892440814789907983, guid: 739f2206320b9c14e8346eb58657b625, type: 3}
-  ammoDropChance: 0.15
+  ammoDropChance: 0
   potionDropPrefab: {fileID: 5105107961816043358, guid: 3dd328da7fc1338439849bf445483408, type: 3}
-  potionDropChance: 0.15
+  potionDropChance: 0
 --- !u!114 &-4570966190036314647
 MonoBehaviour:
   m_ObjectHideFlags: 0

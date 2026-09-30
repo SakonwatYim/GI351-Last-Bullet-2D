@@ -103,21 +103,22 @@ public class PlayerHUD : MonoBehaviour
     }
     private void countSkillUpdate()
     {
+        skill = FindAnyObjectByType<AbsorbSkill>();
         if (skill.count == 0)
         {
-            skill.skill = "can use skill 2 time";
+            skillCount.text = "can use skill 2 time";
         }
         if (skill.count == 1)
         {
-            skill.skill = "can use skill 1 time";
+            skillCount.text = "can use skill 1 time";
         }
         if (skill.count == 2)
         {
-            skill.skill = "can use skill 0 time";
+            skillCount.text = "can use skill 0 time";
         }
         if (skill.count >= 3)
         {
-            skill.skill = "cant use skill";
+            skillCount.text = "cant use skill";
         }
     }
     private void UpdateSkill()

@@ -28,13 +28,13 @@ public class WaveSpawner : MonoBehaviour
     [SerializeField] private float minDistanceFromPlayer = 6f; // don't spawn right on top of the player
 
     [Header("Wave Size")]
-    [SerializeField] private int startCount = 3;
+    [SerializeField] private int startCount;
     [SerializeField] private int extraPerWave = 2;
     [SerializeField] private int maxAlive = 15;           // cap on monsters alive at once
 
     [Header("Timing")]
     [SerializeField] private float firstWaveDelay = 2f;
-    [SerializeField] private float timeBetweenWaves = 4f;
+    [SerializeField] private float timeBetweenWaves = 0;
     [SerializeField] private float spawnInterval = 0.6f;
     [SerializeField] private float minSpawnInterval = 0.15f;
     [SerializeField] private float spawnIntervalDecay = 0.95f; // interval *= this every wave
@@ -43,7 +43,7 @@ public class WaveSpawner : MonoBehaviour
     public int CurrentWave { get; private set; }
     public int AliveCount => alive.Count;
     public bool IsBreak { get; private set; }             // true while waiting for the next wave
-    public float BreakTimeLeft => IsBreak ? Mathf.Max(0f, breakEndTime - Time.time) : 0f;
+    public float BreakTimeLeft => IsBreak ? 0 : 0f;
 
     public event Action<int> OnWaveStarted;
     public event Action<int> OnWaveCleared;
@@ -107,12 +107,12 @@ public class WaveSpawner : MonoBehaviour
     }
     private IEnumerator endWave()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0f);
         if (passUI.Instance != null) passUI.Instance.Show();
     }
     private void Update()
-    {
-        if (CurrentWave >= endGame)
+    { 
+      if (CurrentWave >= endGame)
         { StartCoroutine(endWave()); }
     }
     private bool SpawnOne()

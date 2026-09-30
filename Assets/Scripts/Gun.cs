@@ -14,8 +14,8 @@ public class Gun : MonoBehaviour
     [SerializeField] private AmmoPickup ammoPickupPrefab; // optional: spawned when dropping ammo
 
     [Header("Ammo")]
-    [SerializeField] private int maxAmmo = 30;
-    [SerializeField] private int startAmmo = 30;
+    [SerializeField] private int maxAmmo ;
+    [SerializeField] private int startAmmo;
     [SerializeField] private int dropAmount = 5;
     [SerializeField] private float fireCooldown = 0.2f;
 

@@ -65,7 +65,7 @@ public class GameOverUI : MonoBehaviour
         if (newWaveRecord || newKillRecord) PlayerPrefs.Save();
 
         if (killsText != null) killsText.text = $"Monsters Killed: {Kills}";
-        if (waveText != null) waveText.text = $"Wave Reached: {wave}";
+     //   if (waveText != null) waveText.text = $"Wave Reached: {wave}";
         if (bestText != null) bestText.text = $"Best: Wave {BestWave}  |  Kills {BestKills}";
         if (newRecordText != null)
         {
