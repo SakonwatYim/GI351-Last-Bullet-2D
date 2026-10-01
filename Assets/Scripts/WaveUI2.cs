@@ -4,9 +4,9 @@ using UnityEngine;
 
 // Shows wave info from WaveSpawner. Put on the Canvas (or any UI object).
 // Every text field is optional — leave empty to skip it.
-public class WaveUI : MonoBehaviour
+public class WaveUI2 : MonoBehaviour
 {
-    [SerializeField] private WaveSpawner spawner;          // leave empty = find in scene
+    [SerializeField] private WaveSpawner2 spawner;          // leave empty = find in scene
 
     [Header("HUD")]
     [SerializeField] private TMP_Text waveText;            // "WAVE 3"
@@ -23,7 +23,7 @@ public class WaveUI : MonoBehaviour
 
     private void Awake()
     {
-        if (spawner == null) spawner = FindAnyObjectByType<WaveSpawner>();
+        if (spawner == null) spawner = FindAnyObjectByType<WaveSpawner2>();
         if (announceText != null) SetAlpha(announceText, 0f);
     }
 
@@ -46,7 +46,7 @@ public class WaveUI : MonoBehaviour
         if (spawner == null) return;
 
         if (waveText != null)
-            waveText.text = "Stage 1";
+            waveText.text = "Stage 2";
 
         if (aliveText != null)
         {

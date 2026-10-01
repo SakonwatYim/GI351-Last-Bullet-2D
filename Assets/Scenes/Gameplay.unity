@@ -1146,9 +1146,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 842482569}
-        m_TargetAssemblyTypeName: GameOverUI, Assembly-CSharp
-        m_MethodName: PlayAgain
+      - m_Target: {fileID: 842482573}
+        m_TargetAssemblyTypeName: passUI, Assembly-CSharp
+        m_MethodName: nextGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1354,9 +1354,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11500000, guid: 1011821c590a0c2499bb32f73aba830e, type: 3}
+      - m_Target: {fileID: 842482569}
         m_TargetAssemblyTypeName: GameOverUI, Assembly-CSharp
-        m_MethodName: 
+        m_MethodName: BackToMainMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2570,9 +2570,10 @@ GameObject:
   - component: {fileID: 842482566}
   - component: {fileID: 842482565}
   - component: {fileID: 842482564}
-  - component: {fileID: 842482563}
+  - component: {fileID: 842482571}
   - component: {fileID: 842482568}
-  - component: {fileID: 842482570}
+  - component: {fileID: 842482573}
+  - component: {fileID: 842482572}
   - component: {fileID: 842482569}
   m_Layer: 5
   m_Name: Canvas
@@ -2581,26 +2582,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &842482563
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 842482562}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa459b59d88e8174193668fcaa64b81c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawner: {fileID: 0}
-  waveText: {fileID: 1335280753}
-  aliveText: {fileID: 1969614238}
-  announceText: {fileID: 95792994}
-  announceHold: 1.5
-  announceFade: 0.4
-  waveStartColor: {r: 1, g: 0.35, b: 0.3, a: 1}
-  waveClearColor: {r: 0.4, g: 1, b: 0.5, a: 1}
 --- !u!114 &842482564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2744,7 +2725,44 @@ MonoBehaviour:
   waveText: {fileID: 329767306}
   bestText: {fileID: 1954319546}
   newRecordText: {fileID: 423843205}
---- !u!114 &842482570
+--- !u!114 &842482571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 842482562}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa459b59d88e8174193668fcaa64b81c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawner: {fileID: 0}
+  waveText: {fileID: 1335280753}
+  aliveText: {fileID: 1969614238}
+  announceText: {fileID: 95792994}
+  announceHold: 1.5
+  announceFade: 0.4
+  waveStartColor: {r: 1, g: 0.35, b: 0.3, a: 1}
+  waveClearColor: {r: 0.4, g: 1, b: 0.5, a: 1}
+--- !u!114 &842482572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 842482562}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: badbedc22fc89464ea0db0619ce2b7cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PassPanel: {fileID: 1193599462}
+  pauseOnGameOver: 1
+  mainMenuScene: Main
+  nextScene: GamePlay3
+  spawner: {fileID: 0}
+--- !u!114 &842482573
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2759,6 +2777,7 @@ MonoBehaviour:
   PassPanel: {fileID: 1193599462}
   pauseOnGameOver: 1
   mainMenuScene: Main
+  nextScene: GamePlay2
   spawner: {fileID: 0}
 --- !u!1 &868652132
 GameObject:
@@ -5693,7 +5712,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1616076888}
-  - component: {fileID: 1616076887}
+  - component: {fileID: 1616076890}
   m_Layer: 0
   m_Name: WaveSpawner
   m_TagString: Untagged
@@ -5701,43 +5720,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1616076887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1616076886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 246f917d87603bb488d5992f6d78faa0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  endGame: 2
-  monsters:
-  - prefab: {fileID: 7054450379502571810, guid: 2fe83d0362167384ca6a37fcc9a1a2c7, type: 3}
-    weight: 2
-    unlockWave: 1
-  - prefab: {fileID: 2500048631545524024, guid: 90d66772d5b3cff4ea9e18aa2a56b01f, type: 3}
-    weight: 1
-    unlockWave: 3
-  spawnPoints:
-  - {fileID: 2065429894}
-  - {fileID: 1519040207}
-  - {fileID: 2014247616}
-  - {fileID: 52722526}
-  - {fileID: 519563491}
-  - {fileID: 1892306326}
-  minDistanceFromPlayer: 4
-  startCount: 3
-  extraPerWave: 2
-  maxAlive: 15
-  firstWaveDelay: 2
-  timeBetweenWaves: 4
-  spawnInterval: 0.6
-  minSpawnInterval: 0.15
-  spawnIntervalDecay: 0.95
-  maxWaveDuration: 0
 --- !u!4 &1616076888
 Transform:
   m_ObjectHideFlags: 0
@@ -5753,6 +5735,40 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1616076890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1616076886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 246f917d87603bb488d5992f6d78faa0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  endGame: 2
+  monsters:
+  - prefab: {fileID: 7054450379502571810, guid: 2fe83d0362167384ca6a37fcc9a1a2c7, type: 3}
+    weight: 1
+    unlockWave: 1
+  spawnPoints:
+  - {fileID: 2065429894}
+  - {fileID: 1519040207}
+  - {fileID: 2014247616}
+  - {fileID: 52722526}
+  - {fileID: 519563491}
+  - {fileID: 1892306326}
+  minDistanceFromPlayer: 5
+  startCount: 5
+  extraPerWave: 2
+  maxAlive: 15
+  firstWaveDelay: 2
+  timeBetweenWaves: 0
+  spawnInterval: 0.6
+  minSpawnInterval: 0.15
+  spawnIntervalDecay: 0.95
+  maxWaveDuration: 0
 --- !u!1 &1621969763
 GameObject:
   m_ObjectHideFlags: 0

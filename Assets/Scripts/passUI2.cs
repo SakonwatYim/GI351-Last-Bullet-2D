@@ -2,13 +2,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class passUI : MonoBehaviour
+public class passUI2 : MonoBehaviour
 {
-    public static passUI Instance { get; private set; }
+    public static passUI2 Instance { get; private set; }
     [SerializeField] private GameObject PassPanel;
     [SerializeField] private bool pauseOnGameOver = true;
     [SerializeField] private string mainMenuScene = "Main";
-    [SerializeField] private string nextScene = "GamePlay2";
+    [SerializeField] private string nextScene = "GamePlay 3";
     [SerializeField] private WaveSpawner spawner;
     private bool shown;
 
@@ -34,7 +34,7 @@ public class passUI : MonoBehaviour
     }
     public void nextGame()
     {
+       SceneManager.LoadScene(nextScene);
         Time.timeScale = 1f;
-        SceneManager.LoadScene(nextScene);
     }
 }
