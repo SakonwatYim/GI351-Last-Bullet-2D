@@ -7891,7 +7891,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
       propertyPath: maxAmmo
-      value: 100
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
       propertyPath: startAmmo
@@ -7931,6 +7931,42 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
       propertyPath: laserBlockLayers.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[0].time
+      value: -0.108335115
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[0].value
+      value: 0.0119018555
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[0].inSlope
+      value: -0.15998603
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[1].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[0].outSlope
+      value: -0.15998603
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[1].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[0].outWeight
+      value: 0.18796962
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[0].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[1].tangentMode
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5114829128311305024, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}

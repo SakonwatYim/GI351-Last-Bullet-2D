@@ -7469,7 +7469,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
       propertyPath: maxAmmo
-      value: 100
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
       propertyPath: startAmmo
@@ -7510,6 +7510,34 @@ PrefabInstance:
     - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
       propertyPath: laserBlockLayers.m_Bits
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[0].time
+      value: -0.16501999
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[0].value
+      value: 0.0058898926
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[0].inSlope
+      value: -0.11789048
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[1].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[0].outSlope
+      value: -0.11789048
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[1].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3325761610446868678, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
+      propertyPath: powerCurve.m_Curve.Array.data[0].outWeight
+      value: 0.5606142
       objectReference: {fileID: 0}
     - target: {fileID: 5114829128311305024, guid: 3fecbf99963a1d4489eff0cfbc55a411, type: 3}
       propertyPath: showDebugGUI
