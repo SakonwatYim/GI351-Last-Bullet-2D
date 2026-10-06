@@ -7,6 +7,8 @@ public class AbsorbSkill : MonoBehaviour
 {
     [SerializeField] private float duration = 5f;
     [SerializeField] private float cooldown = 10f;
+    [Tooltip("How many times the skill can be used per level. 0 = unlimited.")]
+    [SerializeField] private int maxUses = 3;
     [SerializeField] private int ammoPerBullet = 1;
     [SerializeField] private Color hitTint = new Color(0.4f, 0.9f, 1f); // สีตอนโดนยิง
     [SerializeField] private Color activeTint = new Color(0.2f, 0.6f, 1f, 1f); // สีตอนกดใช้สกิล (สามารถปรับแต่งสีได้ใน Inspector)
@@ -27,7 +29,11 @@ public class AbsorbSkill : MonoBehaviour
     public float Duration => duration;
     public float Cooldown => cooldown;
     public int AbsorbedAmmo => absorbedThisUse * ammoPerBullet;
+    public bool HasLimitedUses => maxUses > 0;
+    public int UsesLeft => Mathf.Max(0, maxUses - usesSpent);
+    public bool OutOfUses => HasLimitedUses && UsesLeft == 0;
 
+    private int usesSpent;
     private Gun gun;
     private SpriteRenderer[] renderers;
     private Color[] baseColors;
@@ -55,7 +61,7 @@ public class AbsorbSkill : MonoBehaviour
     private void Update()
     {
         var kb = Keyboard.current;
-        if (kb != null && kb.fKey.wasPressedThisFrame && Time.time >= readyAt)
+        if (kb != null && !PauseMenu.IsPaused && kb.fKey.wasPressedThisFrame && Time.time >= readyAt && !OutOfUses)
             Activate();
 
         // ตรวจสอบว่าหมดเวลาสกิลหรือยัง เพื่อคืนค่าสีปกติ (ถ้าไม่ได้โดนยิงค้างอยู่)
@@ -79,8 +85,9 @@ public class AbsorbSkill : MonoBehaviour
         activeUntil = Time.time + duration;
         readyAt = activeUntil + cooldown;
         absorbedThisUse = 0;
+        usesSpent++;
 
-        // สร้างเอฟเฟกต์ที่ตัวผู้เล่น (ไม่ใส่เป็นลูกของ Player เพื่อไม่ให้กลับด้านตามตอนหันซ้าย/ขวา)
+        //สร้างเอฟเฟกต์ที่ตัวผู้เล่น (ไม่ใส่เป็นลูกของ Player เพื่อไม่ให้กลับด้านตามตอนหันซ้าย/ขวา)
         if (skillEffectPrefab != null && skillEffect == null)
             skillEffect = Instantiate(skillEffectPrefab, EffectPosition(), Quaternion.identity);
 
@@ -165,10 +172,13 @@ public class AbsorbSkill : MonoBehaviour
         string text;
         if (IsActive)
             text = $"Skill [F]: ABSORBING {activeUntil - Time.time:0.0}s   (+{absorbedThisUse * ammoPerBullet} ammo)";
+        else if (OutOfUses)
+            text = "Skill [F]: NO USES LEFT";
         else if (CooldownLeft > 0f)
             text = $"Skill [F]: cooldown {CooldownLeft:0.0}s";
         else
             text = "Skill [F]: READY";
+        if (HasLimitedUses && !OutOfUses) text += $"   x{UsesLeft}";
         GUI.Label(new Rect(10, 70, 400, 25), text);
     }
 }

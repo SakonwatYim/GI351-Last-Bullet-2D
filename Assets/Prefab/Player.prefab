@@ -134,9 +134,10 @@ GameObject:
   - component: {fileID: 3325761610446868678}
   - component: {fileID: 5114829128311305024}
   - component: {fileID: 736050264696360816}
+  - component: {fileID: 352346131270804738}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -149,7 +150,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5417116258322921633}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -7.87, y: 0.56, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
@@ -243,19 +244,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a527e58f927172e409ac3f7bf5ef2dee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 8
-  groundAcceleration: 80
+  moveSpeed: 10
+  groundAcceleration: 90
   airAcceleration: 45
   jumpForce: 14
   jumpCutMultiplier: 0.5
   fallGravityMultiplier: 1.8
-  maxFallSpeed: 20
+  maxFallSpeed: 40
   coyoteTime: 0.1
   jumpBufferTime: 0.12
-  wallSlideSpeed: 3
-  wallJumpForce: {x: 9, y: 14}
-  wallJumpControlLock: 0.18
-  knockbackControlLock: 0.15
+  knockbackControlLock: 0.2
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
@@ -277,27 +275,27 @@ MonoBehaviour:
   firePoint: {fileID: 2459743499064318295}
   bulletPrefab: {fileID: 943375943367977110, guid: a5fd15d63dd0c2945bfcbb4c3a7b950a, type: 3}
   ammoPickupPrefab: {fileID: 6892440814789907983, guid: 739f2206320b9c14e8346eb58657b625, type: 3}
-  maxAmmo: 10
-  startAmmo: 10
-  dropAmount: 5
+  maxAmmo: 30
+  startAmmo: 0
+  dropAmount: 2
   fireCooldown: 0.2
   powerCurve:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 1
+      time: -0.3637451
+      value: -0.006225586
+      inSlope: 0.0068452884
+      outSlope: 0.0068452884
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
-      outWeight: 0
+      outWeight: 0.20217867
     - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 1
-      outSlope: 0
+      time: 1.1875
+      value: 0.9833336
+      inSlope: 2
+      outSlope: 2
       tangentMode: 0
       weightedMode: 0
       inWeight: 0
@@ -308,25 +306,25 @@ MonoBehaviour:
   minDamage: 1
   maxDamage: 10
   minPellets: 1
-  maxPellets: 7
-  maxSpreadAngle: 45
-  minKnockback: 3
-  maxKnockback: 18
+  maxPellets: 5
+  maxSpreadAngle: 10
+  minKnockback: 2
+  maxKnockback: 10
   minBulletScale: 1
-  maxBulletScale: 2
+  maxBulletScale: 3
   bulletSpeed: 22
   lastBulletIsLaser: 1
   laserDamage: 30
   laserRange: 50
-  laserWidth: 1
+  laserWidth: 3
   laserDuration: 0.3
   laserKnockback: 25
   laserColor: {r: 1, g: 0.2, b: 0.2, a: 1}
   laserBlockLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
   heavyShotAmmo: 20
-  showAmmoGUI: 1
+  showAmmoGUI: 0
 --- !u!114 &5114829128311305024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -358,7 +356,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   duration: 5
   cooldown: 10
-  ammoPerBullet: 1
+  maxUses: 1
+  ammoPerBullet: 2
   hitTint: {r: 0.4, g: 0.9, b: 1, a: 1}
   activeTint: {r: 0.2, g: 0.6, b: 1, a: 1}
   hitTintDuration: 0.15
@@ -366,6 +365,28 @@ MonoBehaviour:
   skillEffectPrefab: {fileID: 2778293962028867361, guid: 5aa86f5ab66eeba41955e9ddd89d69fb, type: 3}
   skillEffectOffset: {x: 0, y: 0}
   showDebugGUI: 0
+--- !u!95 &352346131270804738
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5417116258322921633}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 864310e9c46736143924d8557d8634ab, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &7738744154008795155
 GameObject:
   m_ObjectHideFlags: 0
@@ -478,7 +499,7 @@ Transform:
   m_GameObject: {fileID: 9133777758052357137}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.161, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

@@ -128,7 +128,7 @@ public class PlayerHUD : MonoBehaviour
             ammoText.text = $"{gun.CurrentAmmo} / {gun.MaxAmmo}";
         if (powerText != null)
         {
-            if (gun.CurrentAmmo <= 0) powerText.text = "NO AMMO";
+            if (gun.CurrentAmmo <= 0) powerText.text = "NO NEEDLE";
             else if (laser) powerText.text = "LASER READY";
             else powerText.text = $"POWER {gun.Power * 100f:0}%  x{gun.PelletCount}";
             powerText.color = c;
@@ -149,6 +149,12 @@ public class PlayerHUD : MonoBehaviour
             text = $"+{skill.AbsorbedAmmo}";
             c = skillActiveColor;
         }
+        else if (skill.OutOfUses)
+        {
+            fill = 0f;
+            text = "x0";
+            c = skillCooldownColor;
+        }
         else if (skill.CooldownLeft > 0f)
         {
             fill = skill.Cooldown > 0f ? 1f - skill.CooldownLeft / skill.Cooldown : 1f;
@@ -158,7 +164,7 @@ public class PlayerHUD : MonoBehaviour
         else
         {
             fill = 1f;
-            text = "READY";
+            text = skill.HasLimitedUses ? $"x{skill.UsesLeft}" : "READY";
             c = skillReadyColor;
         }
 

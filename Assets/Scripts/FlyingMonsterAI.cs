@@ -53,11 +53,10 @@ public class FlyingMonsterAI : MonoBehaviour
     [SerializeField] private float hitStunTime = 0.25f;
 
     [Header("Sound")]
-    [SerializeField] private float flapInterval = 0.6f;
     [SerializeField] private float flapVolume = 0.4f;
-    [SerializeField] private float hearRange = 12f;          // wing flaps only play this close to the player
+    [SerializeField] private float hearRange = 12f;          // wing sound only plays this close to the player
 
-    private float flapTimer;
+    private AudioSource flapSource;                          // on this monster, so it goes silent when it dies
     private Rigidbody2D rb;
     private Collider2D col;
     private Monster monster;
@@ -85,6 +84,7 @@ public class FlyingMonsterAI : MonoBehaviour
     {
         var p = FindAnyObjectByType<PlayerController>();
         if (p != null) player = p.transform;
+        flapSource = SoundManager.Instance.CreateLoop("MonsFly", gameObject, flapVolume);
 
         home = transform.position;
         wanderTarget = home;
@@ -104,15 +104,9 @@ public class FlyingMonsterAI : MonoBehaviour
 
         float dist = Vector2.Distance(transform.position, player.position);
 
-        if (dist <= hearRange)
-        {
-            flapTimer -= Time.deltaTime;
-            if (flapTimer <= 0f)
-            {
-                flapTimer = flapInterval;
-                SoundManager.Instance.PlaySound2D("MonsFly", flapVolume);
-            }
-        }
+        bool audible = dist <= hearRange;
+        if (audible && !flapSource.isPlaying) flapSource.Play();
+        else if (!audible && flapSource.isPlaying) flapSource.Stop();
 
         switch (state)
         {

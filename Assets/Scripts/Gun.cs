@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 // "The Last Bullet" style gun: the LESS ammo you have, the STRONGER each shot is.
-// Put this on the Player. Aim with the mouse, Left Click to shoot, E to drop ammo.
+// Put this on the Player. Aim with the mouse, Left Click to shoot, E to throw away ammo.
 // Each shot pushes the player the opposite way (shoot down = rocket jump).
 [RequireComponent(typeof(PlayerController))]
 public class Gun : MonoBehaviour
@@ -11,7 +11,6 @@ public class Gun : MonoBehaviour
     [SerializeField] private Transform gunPivot;   // child of Player, rotates toward the mouse
     [SerializeField] private Transform firePoint;  // child of gunPivot, at the barrel tip
     [SerializeField] private Bullet bulletPrefab;
-    [SerializeField] private AmmoPickup ammoPickupPrefab; // optional: spawned when dropping ammo
 
     [Header("Ammo")]
     [SerializeField] private int maxAmmo ;
@@ -82,6 +81,8 @@ public class Gun : MonoBehaviour
 
     private void Update()
     {
+        if (PauseMenu.IsPaused) return; // clicking pause-menu buttons must not fire the gun
+
         UpdateAim();
 
         var mouse = Mouse.current;
@@ -227,13 +228,7 @@ public class Gun : MonoBehaviour
     {
         int amount = Mathf.Min(dropAmount, CurrentAmmo);
         if (amount <= 0) return;
-        CurrentAmmo -= amount;
-
-        if (ammoPickupPrefab != null)
-        {
-            AmmoPickup p = Instantiate(ammoPickupPrefab, transform.position + Vector3.up * 0.5f, Quaternion.identity);
-            p.Setup(amount, new Vector2(player.FacingDirection * 3f, 4f));
-        }
+        CurrentAmmo -= amount; // thrown away: nothing is dropped to pick back up
     }
 
     // Returns how many bullets were actually added (0 if already full)

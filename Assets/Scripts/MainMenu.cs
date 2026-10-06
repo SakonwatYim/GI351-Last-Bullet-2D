@@ -54,6 +54,11 @@ public class MainMenu : MonoBehaviour
         SoundManager.Instance.PlaySound2D("Button");
     }
 
+    public void BackToMainMenu()
+    {
+        SoundManager.Instance.PlaySound2D("Button");
+        SceneManager.LoadScene("Main");
+    }
 
     public void QuitGame()
     {

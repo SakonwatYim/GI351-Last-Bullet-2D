@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7054450379502571810}
   - component: {fileID: 8881441235653319859}
   - component: {fileID: -4787974777702650433}
+  - component: {fileID: 8504726050467408070}
   m_Layer: 0
   m_Name: Monster Shoot
   m_TagString: Untagged
@@ -243,3 +244,25 @@ MonoBehaviour:
   damageDropSpeed: 1.5
   hideWhenFull: 0
   sortingOrderOffset: 10
+--- !u!95 &8504726050467408070
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5745600984160519358}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5c5ff3f69286b1e439d751b4af73b6af, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
