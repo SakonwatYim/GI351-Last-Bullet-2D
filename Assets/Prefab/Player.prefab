@@ -397,6 +397,7 @@ MonoBehaviour:
   hurtKnockback: {x: 7, y: 6}
   blinkInterval: 0.1
   restartDelay: 1.5
+  showDebugGUI: 0
 --- !u!114 &736050264696360816
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -413,8 +414,12 @@ MonoBehaviour:
   cooldown: 10
   ammoPerBullet: 1
   hitTint: {r: 0.4, g: 0.9, b: 1, a: 1}
+  activeTint: {r: 0.2, g: 0.6, b: 1, a: 1}
   hitTintDuration: 0.15
   bodyRenderer: {fileID: 0}
+  skillEffectPrefab: {fileID: 2778293962028867361, guid: 5aa86f5ab66eeba41955e9ddd89d69fb, type: 3}
+  skillEffectOffset: {x: 0, y: 0}
+  showDebugGUI: 0
 --- !u!1 &9133777758052357137
 GameObject:
   m_ObjectHideFlags: 0
