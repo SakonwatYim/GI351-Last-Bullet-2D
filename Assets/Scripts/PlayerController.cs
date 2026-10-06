@@ -3,7 +3,6 @@ using UnityEngine.InputSystem;
 
 // Side-scrolling platformer movement (inspired by "The Last Bullet"):
 // - A/D to move, W or Space to jump (hold for a higher jump)
-// - Wall slide + wall jump
 // - Coyote time and jump buffering so jumps feel responsive
 // - ApplyKnockback() is ready for gun recoil / enemy hits later
 [RequireComponent(typeof(Rigidbody2D))]
@@ -22,11 +21,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float maxFallSpeed = 20f;
     [SerializeField] private float coyoteTime = 0.1f;
     [SerializeField] private float jumpBufferTime = 0.12f;
-
-    [Header("Wall")]
-    [SerializeField] private float wallSlideSpeed = 3f;
-    [SerializeField] private Vector2 wallJumpForce = new Vector2(9f, 14f);
-    [SerializeField] private float wallJumpControlLock = 0.18f; // time the player can't steer after a wall jump
 
     [Header("Knockback")]
     [SerializeField] private float knockbackControlLock = 0.15f;
@@ -49,8 +43,6 @@ public class PlayerController : MonoBehaviour
     private float coyoteTimer;
     private float jumpBufferTimer;
     private float controlLockTimer;
-    private int wallDirection; // -1 = wall on left, 1 = wall on right, 0 = none
-    private bool isWallSliding;
     private float footstepTimer;
 
     private void Awake()
@@ -71,13 +63,8 @@ public class PlayerController : MonoBehaviour
         jumpBufferTimer -= Time.deltaTime;
         controlLockTimer -= Time.deltaTime;
 
-        if (jumpBufferTimer > 0f)
-        {
-            if (coyoteTimer > 0f)
-                Jump();
-            else if (wallDirection != 0 && !IsGrounded)
-                WallJump();
-        }
+        if (jumpBufferTimer > 0f && coyoteTimer > 0f)
+            Jump();
 
         UpdateFootsteps();
     }
@@ -97,7 +84,6 @@ public class PlayerController : MonoBehaviour
     {
         CheckCollisions();
         ApplyHorizontalMovement();
-        ApplyWallSlide();
         ApplyGravity();
     }
 
@@ -142,16 +128,11 @@ public class PlayerController : MonoBehaviour
         Bounds b = col.bounds;
         Vector2 center = b.center;
 
-        // Slightly narrower boxes so a wall doesn't count as ground (and vice versa)
+        // Slightly narrower box so a wall doesn't count as ground
         Vector2 groundBox = new Vector2(b.size.x * 0.9f, checkDistance);
         Vector2 groundPos = new Vector2(center.x, b.min.y - checkDistance * 0.5f);
         IsGrounded = rb.linearVelocity.y <= 0.01f &&
                      Physics2D.OverlapBox(groundPos, groundBox, 0f, groundLayer);
-
-        Vector2 wallBox = new Vector2(checkDistance, b.size.y * 0.8f);
-        bool wallLeft = Physics2D.OverlapBox(new Vector2(b.min.x - checkDistance * 0.5f, center.y), wallBox, 0f, groundLayer);
-        bool wallRight = Physics2D.OverlapBox(new Vector2(b.max.x + checkDistance * 0.5f, center.y), wallBox, 0f, groundLayer);
-        wallDirection = wallRight ? 1 : wallLeft ? -1 : 0;
     }
 
     private void ApplyHorizontalMovement()
@@ -162,17 +143,6 @@ public class PlayerController : MonoBehaviour
         float accel = IsGrounded ? groundAcceleration : airAcceleration;
         float newX = Mathf.MoveTowards(rb.linearVelocity.x, targetSpeed, accel * Time.fixedDeltaTime);
         rb.linearVelocity = new Vector2(newX, rb.linearVelocity.y);
-    }
-
-    private void ApplyWallSlide()
-    {
-        // Slide only while pushing into the wall and falling
-        isWallSliding = !IsGrounded && wallDirection != 0 &&
-                        Mathf.Sign(moveInput) == wallDirection && moveInput != 0f &&
-                        rb.linearVelocity.y < 0f;
-
-        if (isWallSliding)
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, Mathf.Max(rb.linearVelocity.y, -wallSlideSpeed));
     }
 
     private void ApplyGravity()
@@ -188,15 +158,6 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         jumpBufferTimer = 0f;
         coyoteTimer = 0f;
-    }
-
-    private void WallJump()
-    {
-        int away = -wallDirection;
-        rb.linearVelocity = new Vector2(away * wallJumpForce.x, wallJumpForce.y);
-        SetFacing(away);
-        controlLockTimer = wallJumpControlLock;
-        jumpBufferTimer = 0f;
     }
 
     // Call this from the gun (recoil) or from enemies (hit knockback).
@@ -222,8 +183,5 @@ public class PlayerController : MonoBehaviour
         Bounds b = c.bounds;
         Gizmos.color = IsGrounded ? Color.green : Color.red;
         Gizmos.DrawWireCube(new Vector3(b.center.x, b.min.y - checkDistance * 0.5f), new Vector3(b.size.x * 0.9f, checkDistance));
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireCube(new Vector3(b.min.x - checkDistance * 0.5f, b.center.y), new Vector3(checkDistance, b.size.y * 0.8f));
-        Gizmos.DrawWireCube(new Vector3(b.max.x + checkDistance * 0.5f, b.center.y), new Vector3(checkDistance, b.size.y * 0.8f));
     }
 }
