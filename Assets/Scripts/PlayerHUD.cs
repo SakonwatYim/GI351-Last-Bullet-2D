@@ -12,11 +12,15 @@ public class PlayerHUD : MonoBehaviour
 
     [Header("Health")]
     [SerializeField] private Image healthFill;
+    [SerializeField] private Image healthDamageFill;       // white bar BEHIND healthFill, catches up after a hit
     [SerializeField] private TMP_Text healthText;          // "3 / 5"
     [SerializeField] private Color healthColor = new Color(0.9f, 0.2f, 0.25f);
     [SerializeField] private Color lowHealthColor = new Color(1f, 0.6f, 0.1f);
+    [SerializeField] private Color healthDamageColor = Color.white;
     [SerializeField, Range(0f, 1f)] private float lowHealthPercent = 0.3f;
-    [SerializeField] private float barSmoothSpeed = 8f;
+    [SerializeField] private float healFillSpeed = 0.5f;   // red bar grow speed when healing (fraction of the bar per second)
+    [SerializeField] private float damageDelay = 0.4f;     // wait before the white bar starts dropping
+    [SerializeField] private float damageDropSpeed = 1f;   // fraction of the bar per second
 
     [Header("Ammo")]
     [SerializeField] private Image ammoFill;
@@ -27,8 +31,7 @@ public class PlayerHUD : MonoBehaviour
 
     [Header("Skill")]
     [SerializeField] private Image skillFill;              // Filled / Radial 360 on top of the skill icon
-    [SerializeField] private TMP_Text skillText;  // "READY" / "3.2" / "+4"
-    [SerializeField] private TMP_Text skillCount;  // "READY" / "3.2" / "+4"
+    [SerializeField] private TMP_Text skillText;           // "READY" / "3.2" / "+4"
     [SerializeField] private Color skillReadyColor = new Color(0.4f, 0.9f, 1f);
     [SerializeField] private Color skillActiveColor = Color.white;
     [SerializeField] private Color skillCooldownColor = new Color(0.3f, 0.3f, 0.35f);
@@ -37,6 +40,8 @@ public class PlayerHUD : MonoBehaviour
     [SerializeField] private GameObject deathPanel;        // shown when the player dies
 
     private float shownHealth = 1f;
+    private float damageHealth = 1f;
+    private float damageDropTime;
 
     private void Awake()
     {
@@ -51,6 +56,20 @@ public class PlayerHUD : MonoBehaviour
             }
         }
         if (deathPanel != null) deathPanel.SetActive(false);
+        SetupDamageBar();
+    }
+
+    // Makes the white bar white and draws it behind the red bar (UI draws later siblings on top).
+    private void SetupDamageBar()
+    {
+        if (healthDamageFill == null) return;
+        healthDamageFill.color = healthDamageColor;
+
+        if (healthFill == null) return;
+        Transform white = healthDamageFill.transform;
+        Transform red = healthFill.transform;
+        if (white.parent == red.parent && white.GetSiblingIndex() > red.GetSiblingIndex())
+            white.SetSiblingIndex(red.GetSiblingIndex());
     }
 
     private void Update()
@@ -58,7 +77,6 @@ public class PlayerHUD : MonoBehaviour
         UpdateHealth();
         UpdateAmmo();
         UpdateSkill();
-        countSkillUpdate();
     }
 
     private void UpdateHealth()
@@ -66,8 +84,23 @@ public class PlayerHUD : MonoBehaviour
         if (health == null) return;
 
         float target = health.MaxHealth > 0 ? health.CurrentHealth / (float)health.MaxHealth : 0f;
-        shownHealth = Mathf.MoveTowards(shownHealth, target, barSmoothSpeed * Time.deltaTime);
+        if (target < shownHealth)
+        {
+            shownHealth = target;                                  // hit -> red drops instantly
+            damageDropTime = Time.time + damageDelay;              // restart the white bar's delay
+        }
+        else
+        {
+            shownHealth = Mathf.MoveTowards(shownHealth, target, healFillSpeed * Time.deltaTime);
+        }
 
+        if (damageHealth < shownHealth)
+            damageHealth = shownHealth;                            // healed -> white follows red up
+        else if (Time.time >= damageDropTime)
+            damageHealth = Mathf.MoveTowards(damageHealth, shownHealth, damageDropSpeed * Time.deltaTime);
+
+        if (healthDamageFill != null)
+            healthDamageFill.fillAmount = damageHealth;
         if (healthFill != null)
         {
             healthFill.fillAmount = shownHealth;
@@ -101,26 +134,7 @@ public class PlayerHUD : MonoBehaviour
             powerText.color = c;
         }
     }
-    private void countSkillUpdate()
-    {
-        skill = FindAnyObjectByType<AbsorbSkill>();
-        if (skill.count == 0)
-        {
-            skillCount.text = "can use skill 2 time";
-        }
-        if (skill.count == 1)
-        {
-            skillCount.text = "can use skill 1 time";
-        }
-        if (skill.count == 2)
-        {
-            skillCount.text = "can use skill 0 time";
-        }
-        if (skill.count >= 3)
-        {
-            skillCount.text = "cant use skill";
-        }
-    }
+
     private void UpdateSkill()
     {
         if (skill == null) return;
@@ -128,7 +142,7 @@ public class PlayerHUD : MonoBehaviour
         float fill;
         string text;
         Color c;
-        
+
         if (skill.IsActive)
         {
             fill = skill.Duration > 0f ? skill.ActiveTimeLeft / skill.Duration : 0f;
