@@ -158,6 +158,7 @@ public class PlayerController : MonoBehaviour
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
         jumpBufferTimer = 0f;
         coyoteTimer = 0f;
+        SoundManager.Instance.PlaySound2D("PlayerJump");
     }
 
     // Call this from the gun (recoil) or from enemies (hit knockback).
