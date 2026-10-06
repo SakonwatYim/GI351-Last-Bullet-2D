@@ -17,6 +17,6 @@ public class LevelExit : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
         if (spawner != null && !spawner.IsCleared) return;
-        SceneFader.FadeToNext();
+        EndGameUI.LevelCleared();
     }
 }

@@ -29,7 +29,7 @@ public class PauseMenu : MonoBehaviour
     private void Update()
     {
         var kb = Keyboard.current;
-        if (leaving || kb == null || !kb.escapeKey.wasPressedThisFrame) return;
+        if (leaving || EndGameUI.IsShown || kb == null || !kb.escapeKey.wasPressedThisFrame) return;
 
         // Esc on the settings panel goes back to the pause panel first
         if (settingPanel != null && settingPanel.activeSelf) ShowSettings(false);

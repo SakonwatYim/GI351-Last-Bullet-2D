@@ -61,7 +61,7 @@ public class AbsorbSkill : MonoBehaviour
     private void Update()
     {
         var kb = Keyboard.current;
-        if (kb != null && !PauseMenu.IsPaused && kb.fKey.wasPressedThisFrame && Time.time >= readyAt && !OutOfUses)
+        if (kb != null && !PauseMenu.IsPaused && !EndGameUI.IsShown && kb.fKey.wasPressedThisFrame && Time.time >= readyAt && !OutOfUses)
             Activate();
 
         // ตรวจสอบว่าหมดเวลาสกิลหรือยัง เพื่อคืนค่าสีปกติ (ถ้าไม่ได้โดนยิงค้างอยู่)

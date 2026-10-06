@@ -69,7 +69,7 @@ public class MonsterSpawner : MonoBehaviour
 
         IsCleared = true;
         onAllMonstersDead?.Invoke();
-        if (loadNextSceneWhenCleared) SceneFader.FadeToNext();
+        if (loadNextSceneWhenCleared) EndGameUI.LevelCleared();
     }
 
     private static Monster PickMonster(Monster[] prefabs)

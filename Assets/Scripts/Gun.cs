@@ -81,7 +81,7 @@ public class Gun : MonoBehaviour
 
     private void Update()
     {
-        if (PauseMenu.IsPaused) return; // clicking pause-menu buttons must not fire the gun
+        if (PauseMenu.IsPaused || EndGameUI.IsShown) return; // clicking menu buttons must not fire the gun
 
         UpdateAim();
 
