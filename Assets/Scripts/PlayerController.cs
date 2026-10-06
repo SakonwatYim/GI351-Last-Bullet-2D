@@ -35,6 +35,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float checkDistance = 0.05f;
 
+    [Header("Sound")]
+    [SerializeField] private float footstepInterval = 0.3f;
+
     public bool IsGrounded { get; private set; }
     public int FacingDirection { get; private set; } = 1;
 
@@ -48,6 +51,7 @@ public class PlayerController : MonoBehaviour
     private float controlLockTimer;
     private int wallDirection; // -1 = wall on left, 1 = wall on right, 0 = none
     private bool isWallSliding;
+    private float footstepTimer;
 
     private void Awake()
     {
@@ -74,6 +78,19 @@ public class PlayerController : MonoBehaviour
             else if (wallDirection != 0 && !IsGrounded)
                 WallJump();
         }
+
+        UpdateFootsteps();
+    }
+
+    private void UpdateFootsteps()
+    {
+        bool walking = IsGrounded && moveInput != 0f && Mathf.Abs(rb.linearVelocity.x) > 0.5f;
+        if (!walking) { footstepTimer = 0f; return; } // first step plays right away
+
+        footstepTimer -= Time.deltaTime;
+        if (footstepTimer > 0f) return;
+        footstepTimer = footstepInterval;
+        SoundManager.Instance.PlaySound2D("PlayerWalk");
     }
 
     private void FixedUpdate()

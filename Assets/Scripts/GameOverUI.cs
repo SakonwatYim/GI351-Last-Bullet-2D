@@ -4,11 +4,10 @@ using UnityEngine.SceneManagement;
 
 // Put this on the Canvas (or any always-active object). Assign the Game Over panel,
 // then hook the buttons' OnClick to PlayAgain() and BackToMainMenu().
-// Counts monster kills, shows the wave reached, and saves the best of each (PlayerPrefs).
+// Counts monster kills and saves the best (PlayerPrefs).
 // Every text field is optional — leave empty to skip it.
 public class GameOverUI : MonoBehaviour
 {
-    private const string BestWaveKey = "BestWave";
     private const string BestKillsKey = "BestKills";
 
     public static GameOverUI Instance { get; private set; }
@@ -16,16 +15,13 @@ public class GameOverUI : MonoBehaviour
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private string mainMenuScene = "Main";
     [SerializeField] private bool pauseOnGameOver = true;
-    [SerializeField] private WaveSpawner spawner;          // leave empty = find in scene
 
     [Header("Result Texts")]
     [SerializeField] private TMP_Text killsText;           // "Monsters Killed: 12"
-    [SerializeField] private TMP_Text waveText;            // "Wave Reached: 4"
-    [SerializeField] private TMP_Text bestText;            // "Best: Wave 6  |  Kills 30"
+    [SerializeField] private TMP_Text bestText;            // "Best: Kills 30"
     [SerializeField] private TMP_Text newRecordText;       // "NEW HIGH SCORE!" (hidden if no record)
 
     public int Kills { get; private set; }
-    public static int BestWave => PlayerPrefs.GetInt(BestWaveKey, 0);
     public static int BestKills => PlayerPrefs.GetInt(BestKillsKey, 0);
 
     private bool shown;
@@ -33,7 +29,6 @@ public class GameOverUI : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        if (spawner == null) spawner = FindAnyObjectByType<WaveSpawner>();
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
     }
 
@@ -56,20 +51,19 @@ public class GameOverUI : MonoBehaviour
         if (shown) return;
         shown = true;
 
-        int wave = spawner != null ? spawner.CurrentWave : 0;
-        bool newWaveRecord = wave > BestWave;
         bool newKillRecord = Kills > BestKills;
 
-        if (newWaveRecord) PlayerPrefs.SetInt(BestWaveKey, wave);
-        if (newKillRecord) PlayerPrefs.SetInt(BestKillsKey, Kills);
-        if (newWaveRecord || newKillRecord) PlayerPrefs.Save();
+        if (newKillRecord)
+        {
+            PlayerPrefs.SetInt(BestKillsKey, Kills);
+            PlayerPrefs.Save();
+        }
 
         if (killsText != null) killsText.text = $"Monsters Killed: {Kills}";
-     //   if (waveText != null) waveText.text = $"Wave Reached: {wave}";
-        if (bestText != null) bestText.text = $"Best: Wave {BestWave}  |  Kills {BestKills}";
+        if (bestText != null) bestText.text = $"Best: Kills {BestKills}";
         if (newRecordText != null)
         {
-            newRecordText.gameObject.SetActive(newWaveRecord || newKillRecord);
+            newRecordText.gameObject.SetActive(newKillRecord);
             newRecordText.text = "NEW HIGH SCORE!";
         }
 
@@ -79,13 +73,13 @@ public class GameOverUI : MonoBehaviour
 
     public void PlayAgain()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SoundManager.Instance.PlaySound2D("Button");
+        SceneFader.Reload();
     }
 
     public void BackToMainMenu()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(mainMenuScene);
+        SoundManager.Instance.PlaySound2D("Button");
+        SceneFader.FadeTo(mainMenuScene);
     }
 }

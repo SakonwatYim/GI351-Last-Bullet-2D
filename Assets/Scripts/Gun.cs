@@ -44,6 +44,10 @@ public class Gun : MonoBehaviour
     [Tooltip("Layers that stop the laser (e.g. Ground). Everything else is pierced.")]
     [SerializeField] private LayerMask laserBlockLayers;
 
+    [Header("Sound")]
+    [Tooltip("At this much ammo or less the shot uses the Shoot2-20 sound, above it Shoot21-30.")]
+    [SerializeField] private int heavyShotAmmo = 20;
+
     [Header("Debug")]
     [SerializeField] private bool showAmmoGUI = true;
 
@@ -126,6 +130,7 @@ public class Gun : MonoBehaviour
         {
             nextFireTime = Time.time + fireCooldown;
             FireLaser();
+            SoundManager.Instance.PlaySound2D("ShootRazor");
             CurrentAmmo--;
             player.ApplyKnockback(-aimDirection * laserKnockback);
             if (CameraFollow.Instance != null) CameraFollow.Instance.Shake(0.5f, 0.35f);
@@ -155,6 +160,7 @@ public class Gun : MonoBehaviour
             b.Init(dir * bulletSpeed, damage, scale, gameObject);
         }
 
+        SoundManager.Instance.PlaySound2D(CurrentAmmo <= heavyShotAmmo ? "Shoot2-20" : "Shoot21-30");
         CurrentAmmo--;
         player.ApplyKnockback(-aimDirection * knockback);
 

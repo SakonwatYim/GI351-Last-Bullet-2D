@@ -41,6 +41,12 @@ public class MonsterAI : MonoBehaviour
     [Header("Hit Stun")]
     [SerializeField] private float hitStunTime = 0.25f; // stop moving briefly after being shot so knockback shows
 
+    [Header("Sound")]
+    [SerializeField] private float footstepInterval = 0.45f;
+    [SerializeField] private float footstepVolume = 0.4f;
+    [SerializeField] private float hearRange = 12f;     // footsteps only play this close to the player
+
+    private float footstepTimer;
     private Rigidbody2D rb;
     private Collider2D col;
     private Monster monster;
@@ -81,6 +87,16 @@ public class MonsterAI : MonoBehaviour
         {
             Shoot();
             nextFireTime = Time.time + fireInterval;
+        }
+
+        if (grounded && Mathf.Abs(rb.linearVelocity.x) > 0.1f && dist <= hearRange)
+        {
+            footstepTimer -= Time.deltaTime;
+            if (footstepTimer <= 0f)
+            {
+                footstepTimer = footstepInterval;
+                SoundManager.Instance.PlaySound2D("MonsWalk", footstepVolume);
+            }
         }
     }
 
@@ -126,6 +142,7 @@ public class MonsterAI : MonoBehaviour
         float rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         Bullet b = Instantiate(bulletPrefab, origin, Quaternion.Euler(0f, 0f, rot));
         b.Init(dir * bulletSpeed, bulletDamage, bulletScale, gameObject);
+        SoundManager.Instance.PlaySound2D("MonsShoot");
     }
 
     private bool CanSeePlayer()

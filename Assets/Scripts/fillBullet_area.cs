@@ -5,11 +5,13 @@ using UnityEngine.UI;
 
 public class fillBullet_area : MonoBehaviour
 {
+    public static event System.Action OnPlayerLeft; // MonsterSpawner listens to this
+
     [SerializeField] private Gun gun;
     float AddTime = 0;
     bool inside = false;
     bool outside = false;
-    float ammo = 0.1f;//àÇÅÒã¹¡ÒÃà¾ÔèÁ¡ÃÐÊØ¹
+    float ammo = 0.1f;//ï¿½ï¿½ï¿½ï¿½ã¹¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¹
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     // Update is called once per frame
     private void Start()
@@ -26,8 +28,10 @@ public class fillBullet_area : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
+        if (!collision.gameObject.CompareTag("Player")) return; // bullets leaving the area don't count
         outside = true;
         inside = false;
+        OnPlayerLeft?.Invoke();
     }
     private void Update()
     {

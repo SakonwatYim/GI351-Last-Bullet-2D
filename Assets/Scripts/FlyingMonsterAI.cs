@@ -52,6 +52,12 @@ public class FlyingMonsterAI : MonoBehaviour
     [Header("Hit Stun")]
     [SerializeField] private float hitStunTime = 0.25f;
 
+    [Header("Sound")]
+    [SerializeField] private float flapInterval = 0.6f;
+    [SerializeField] private float flapVolume = 0.4f;
+    [SerializeField] private float hearRange = 12f;          // wing flaps only play this close to the player
+
+    private float flapTimer;
     private Rigidbody2D rb;
     private Collider2D col;
     private Monster monster;
@@ -97,6 +103,16 @@ public class FlyingMonsterAI : MonoBehaviour
         }
 
         float dist = Vector2.Distance(transform.position, player.position);
+
+        if (dist <= hearRange)
+        {
+            flapTimer -= Time.deltaTime;
+            if (flapTimer <= 0f)
+            {
+                flapTimer = flapInterval;
+                SoundManager.Instance.PlaySound2D("MonsFly", flapVolume);
+            }
+        }
 
         switch (state)
         {
@@ -212,6 +228,7 @@ public class FlyingMonsterAI : MonoBehaviour
         float rot = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         Bullet b = Instantiate(bulletPrefab, origin, Quaternion.Euler(0f, 0f, rot));
         b.Init(dir * bulletSpeed, bulletDamage, bulletScale, gameObject);
+        SoundManager.Instance.PlaySound2D("MonsShoot");
     }
 
     private bool CanSeePlayer()

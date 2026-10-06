@@ -50,6 +50,8 @@ public class Monster : MonoBehaviour, IDamageable
 
         if (health <= 0f)
             Die();
+        else
+            SoundManager.Instance.PlaySound2D("MonsHurt");
     }
 
     private IEnumerator Flash()
@@ -62,6 +64,7 @@ public class Monster : MonoBehaviour, IDamageable
     private void Die()
     {
         isDead = true;
+        SoundManager.Instance.PlaySound2D("MonsDie");
         OnAnyMonsterDied?.Invoke(this);
 
         if (ammoDropPrefab != null && Random.value < ammoDropChance)

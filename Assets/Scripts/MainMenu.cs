@@ -38,7 +38,7 @@ public class MainMenu : MonoBehaviour
 
     public void PlayGame()
     {
-        SceneManager.LoadScene(gameplayScene);
+        SceneFader.FadeTo(gameplayScene);
         MusicManager.Instance.PlayMusic("Level");
         SoundManager.Instance.PlaySound2D("Button");
     }

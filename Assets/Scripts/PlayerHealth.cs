@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 // Put this on the Player. Takes damage from monster bullets / touching monsters,
-// blinks while invincible, and restarts the scene on death.
+// blinks while invincible, and restarts the level (with a fade) on death.
 [RequireComponent(typeof(PlayerController))]
 public class PlayerHealth : MonoBehaviour, IDamageable
 {
@@ -11,7 +11,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     [SerializeField] private float invincibleTime = 1f;
     [SerializeField] private Vector2 hurtKnockback = new Vector2(7f, 6f);
     [SerializeField] private float blinkInterval = 0.1f;
-    [SerializeField] private float restartDelay = 1.5f;
     [SerializeField] private bool showDebugGUI = true;
 
     public int CurrentHealth { get; private set; }
@@ -48,6 +47,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
             return;
         }
 
+        SoundManager.Instance.PlaySound2D("PlayerHurt");
         invincibleUntil = Time.time + invincibleTime;
         StartCoroutine(Blink());
     }
@@ -84,13 +84,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         var gun = GetComponent<Gun>();
         if (gun != null) gun.enabled = false;
         SetVisible(false);
-        StartCoroutine(ShowGameOver());
-    }
-
-    private IEnumerator ShowGameOver()
-    {
-        yield return new WaitForSeconds(restartDelay);
-        if (GameOverUI.Instance != null) GameOverUI.Instance.Show();
+        SoundManager.Instance.PlaySound2D("PlayerDie");
+        SceneFader.Reload(); // respawn: restart this level, no Game Over screen
     }
 
 
